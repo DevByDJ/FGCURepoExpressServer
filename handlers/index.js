@@ -13,11 +13,25 @@ async function deleteOldInternships(){
 }
 
 async function getNewInternships(){
-  console.log('Retrieved new internships!');
+  try {
+    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer internship&page=1&num_pages=25&date_posted=week';
+    const response = await axios.post(url);
+    const data = response.data;
+    console.log('Retrieved new internships! ', data);
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getNewGradPositions(){
-  console.log('Retrieved New Grad Positions');
+  try {
+    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer new grad&page=1&num_pages=25&date_posted=week';
+    const response = await axios.post(url);
+    const data = response.data;
+    console.log('Retrieved new grad positions! ', data);
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 module.exports = {
