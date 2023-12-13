@@ -19,13 +19,13 @@ app.use(logger);
 
 // -- Routers --
 
-app.use('/tag', tagRouter);
+app.use('/api/tag', tagRouter);
 
-app.use('/student', studentRouter);
+app.use('/api/student', studentRouter);
 
-app.use('/company', companyRouter);
+app.use('/api/company', companyRouter);
 
-app.use('/internship', internshipRouter);
+app.use('/api/internship', internshipRouter);
 
 app.get('/', (req, res) => {
   console.log('Server is running..');

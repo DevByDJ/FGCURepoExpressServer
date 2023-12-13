@@ -23,7 +23,7 @@ router.post('/search', async (req, res) => {
       params: {
         query: query || 'software engineer internship', // Use the provided query, or default to 'Python developer in Texas, USA'
         page: page || '1', // Use the provided page, or default to '1'
-        num_pages: num_pages || '10' // Gets 3 pages full of Internships
+        num_pages: num_pages || '30' // Gets 3 pages full of Internships
       },
       headers: {
         'X-RapidAPI-Key': process.env.API_KEY,

@@ -28,11 +28,12 @@ async function getAllInternships() {
 };
 
 async function deleteOldInternships() {
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 0);
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
   try {
-    const result = await Internship.deleteMany({ job_posted_at_datetime_utc: { $lt: thirtyDaysAgo } });
+    const result = await Internship.deleteMany({ job_posted_at_datetime_utc: { $lt: ninetyDaysAgo } });
+    console.log('Deleted from date: ' , ninetyDaysAgo, ' to ', new Date(),)
     return result;
   } catch (err) {
     console.error('Error in deleteOldInternships: ', err);

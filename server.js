@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cron = require('node-cron');
+const { deleteOldInternships, getNewInternships, getNewGradPositions } = require('./handlers')
 
 dotenv.config();
 
@@ -22,11 +24,24 @@ async function connect() {
 
 connect();
 
+cron.schedule('0 3 * * *', async () => {
+  await deleteOldInternships();
+});
+
+cron.schedule('0 0 * * *', async () => {
+  await getNewInternships();
+});
+
+cron.schedule('0 0 * * 1,4,7', async () => {
+  await getNewGradPositions();
+})
+
 const port = process.env.PORT || 8080;
 const host = process.env.HOST || 'localhost';
 
 app.listen(port, () => {
   console.log(`Server is running on http://${host}:${port}`);
 });
+
 
 
