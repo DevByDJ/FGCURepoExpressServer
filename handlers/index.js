@@ -2,8 +2,7 @@ const axios = require('axios');
 
 async function deleteOldInternships(){
   try {
-    //const url = 'https://fgcu-sec.com/api/internship/old';
-    const url = 'http://localhost:8080/api/internship/old';
+    const url = 'https://fgcu-sec.com/api/internship/old';
     const response = await axios.delete(url);
     const data = response.data;
     console.log('Succesfully Removed Old Internships: ', data)
@@ -14,7 +13,7 @@ async function deleteOldInternships(){
 
 async function getNewInternships(){
   try {
-    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer internship&page=1&num_pages=25&date_posted=week';
+    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer internship&page=1&num_pages=20&date_posted=week';
     const response = await axios.post(url);
     const data = response.data;
     console.log('Retrieved new internships! ', data);
@@ -25,7 +24,7 @@ async function getNewInternships(){
 
 async function getNewGradPositions(){
   try {
-    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer new grad&page=1&num_pages=25&date_posted=week';
+    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer new grad&page=1&num_pages=20&date_posted=week';
     const response = await axios.post(url);
     const data = response.data;
     console.log('Retrieved new grad positions! ', data);
