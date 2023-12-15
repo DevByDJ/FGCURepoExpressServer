@@ -13,7 +13,7 @@ async function deleteOldInternships(){
 
 async function getNewInternships(){
   try {
-    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer internship&page=1&num_pages=20&date_posted=week';
+    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer internship&page=1&num_pages=30&date_posted=week';
     const response = await axios.post(url);
     const data = response.data;
     console.log('Retrieved new internships! ', data);
@@ -24,7 +24,7 @@ async function getNewInternships(){
 
 async function getNewGradPositions(){
   try {
-    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer new grad&page=1&num_pages=20&date_posted=week';
+    const url = 'https://fgcu-sec.com/api/internship/search?query=software engineer new grad&page=1&num_pages=30&date_posted=week';
     const response = await axios.post(url);
     const data = response.data;
     console.log('Retrieved new grad positions! ', data);

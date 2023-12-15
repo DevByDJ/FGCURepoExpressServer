@@ -24,16 +24,19 @@ async function connect() {
 
 connect();
 
-cron.schedule('0 3 * * *', async () => {
+cron.schedule(`0 3 * * *`, async () => {
   await deleteOldInternships();
+  console.log('deleteOldInternships() task was called!')
 });
 
-cron.schedule('0 0 * * *', async () => {
+cron.schedule(`*/2 * * * *`, async () => {
   await getNewInternships();
+  console.log('getNewInternships() task was called!')
 });
 
-cron.schedule('0 0 * * 1,4,7', async () => {
+cron.schedule(`*/2 * * * *`, async () => {
   await getNewGradPositions();
+  console.log('getNewGradPositions() task was called!')
 })
 
 const port = process.env.PORT || 8080;
