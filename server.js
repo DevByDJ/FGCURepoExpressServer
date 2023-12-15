@@ -29,12 +29,12 @@ cron.schedule(`0 3 * * *`, async () => {
   console.log('deleteOldInternships() task was called!')
 });
 
-cron.schedule(`*/2 * * * *`, async () => {
+cron.schedule(`0 0 * * *`, async () => {
   await getNewInternships();
   console.log('getNewInternships() task was called!')
 });
 
-cron.schedule(`*/2 * * * *`, async () => {
+cron.schedule(`0 0 * * 1,4,7`, async () => {
   await getNewGradPositions();
   console.log('getNewGradPositions() task was called!')
 })
