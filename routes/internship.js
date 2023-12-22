@@ -39,7 +39,8 @@ router.post('/search', async (req, res) => {
     }
 
     
-    res.status(200).json({ message: 'SUCCESS!'});
+    const timestamp = new Date().toISOString();
+    res.status(200).json({ message: 'SUCCESS!', timestamp });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'An error occurred.' });
@@ -63,9 +64,10 @@ router.get('/all', async (req, res) => {
 
 router.delete('/old', async (req, res) => {
 
+  const timestamp = new Date().toISOString();
   controller.deleteOldInternships()
   .then((internships) => {
-    res.status(201).json(internships);
+    res.status(201).json(internships, timestamp);
   })
   .catch((error) => {
     console.error('Error Deleting Old Internships:', error);
