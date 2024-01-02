@@ -7,6 +7,7 @@ const loginUser = 'SELECT u FROM user u WHERE u.email = $1 AND u.password = $2'
 const getAppliedInternships = 'SELECT internships_applied FROM "user" WHERE id = $1'
 const getFavoritedInternships = 'SELECT internships_favorited FROM "user" WHERE id = $1'
 const insertFavoritedInternships = 'UPDATE "user" SET internships_favorited = array_append(internships_favorited, $1) WHERE id = $2';
+const removeFavoritedInternships = 'UPDATE "user" SET internships_favorited = array_remove(internships_favorited, $1) WHERE id = $2';
 
 module.exports = {
   deleteUser,
@@ -17,5 +18,6 @@ module.exports = {
   loginUser,
   getAppliedInternships,
   getFavoritedInternships,
-  insertFavoritedInternships
+  insertFavoritedInternships,
+  removeFavoritedInternships
 }

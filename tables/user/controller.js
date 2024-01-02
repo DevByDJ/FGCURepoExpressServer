@@ -216,9 +216,14 @@ const getFavoritedInternships = async (request, response) => {
 const insertFavoritedInternships = async (request, response) => {
   try {
     const { id } = request.params;
-    const { internships_favorited } = request.body; // single value
+    const { internships_favorited, isFavorited } = request.body; // single value
 
-    const result = await db.query(queries.insertFavoritedInternships, [internships_favorited, id]);
+    let result;
+    if (isFavorited) {
+      result = await db.query(queries.insertFavoritedInternships, [internships_favorited, id]);
+    } else {
+      result = await db.query(queries.removeFavoritedInternships, [internships_favorited, id]);
+    }
 
     if (result.rowCount === 0) {
       return response.status(400).send('No Favorited Internships found!');
