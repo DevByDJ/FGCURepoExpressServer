@@ -3,7 +3,9 @@ const express = require('express');
 const tagRouter = require('./routes/tag');
 const companyRouter = require('./routes/company');
 const internshipRouter = require('./routes/internship');
-const studentRouter = require('./routes/student');
+const userRouter = require('./routes/user');
+const loginRouter = require('./routes/login');
+const registerRouter = require('./routes/register');
 const cors = require('cors'); 
 
 // -- The utilities the application uses --
@@ -21,7 +23,11 @@ app.use(logger);
 
 app.use('/api/tag', tagRouter);
 
-app.use('/api/student', studentRouter);
+app.use('/api/user', userRouter);
+
+app.use('/api/login', loginRouter);
+
+app.use('/api/register', registerRouter);
 
 app.use('/api/company', companyRouter);
 
