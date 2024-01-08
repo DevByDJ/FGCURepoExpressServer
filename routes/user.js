@@ -18,6 +18,8 @@ router.get('/:id/favorited-internships', controller.getFavoritedInternships);
 
 router.post('/:id/favorited-internships', controller.insertFavoritedInternships);
 
+router.post('/:id/upload-image', controller.uploadImage);
+
 router.put('/', controller.updateUser);
 
 router.delete('/', controller.deleteUser);

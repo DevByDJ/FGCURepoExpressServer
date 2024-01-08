@@ -1,4 +1,7 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
 const { json, req, res } = require('express');
 const saltRounds = 10; // adjust based on your needs
 const queries = require('../user/queries');
@@ -256,6 +259,50 @@ const insertAppliedInternships = async (request, response) => {
   } 
 };
 
+const generateUniqueFilename = (originalName) => {
+  const fileExtension = path.extname(originalName);
+  const hash = crypto.randomBytes(16).toString('hex');
+  return `${Date.now()}-${hash}${fileExtension}`;
+};
+
+const uploadImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const imageFile = req.files.image; // Access the file from req.files
+
+    console.log('Uploaded File: ', imageFile);
+
+    if (!imageFile) {
+      return res.status(400).send('No file uploaded');
+    }
+
+    // Generate a unique filename
+    const uniqueFilename = generateUniqueFilename(imageFile.name);
+    const port = process.env.PORT || 8080; 
+    const uploadUrl = `http://localhost:${port}/uploads/${uniqueFilename}`;
+    const uploadPath = path.join(__dirname, '../../uploads', uniqueFilename);
+
+    // Move the file to the desired location
+    await imageFile.mv(uploadPath);
+
+    // Check if the file exists and handle accordingly
+    // (Your existing logic here, if needed)
+
+    // Save the path to the database
+    const result = await db.query(queries.uploadImage, [uploadUrl, id]);
+
+    if (result.rowCount === 0) {
+      return res.status(400).send('Failed to save image path in the database');
+    }
+
+    res.status(200).json({ message: 'File Uploaded Successfully', filePath: uploadPath });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error: Failed to upload the image');
+  }
+};
+
+
 
 module.exports = {
   registerUser,
@@ -268,4 +315,5 @@ module.exports = {
   getFavoritedInternships,
   insertFavoritedInternships,
   insertAppliedInternships,
+  uploadImage,
 };

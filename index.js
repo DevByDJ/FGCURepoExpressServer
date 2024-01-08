@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const fileUpload = require('express-fileupload');
+const path = require('path');
 const tagRouter = require('./routes/tag');
 const companyRouter = require('./routes/company');
 const internshipRouter = require('./routes/internship');
@@ -11,11 +13,19 @@ const cors = require('cors');
 // -- The utilities the application uses --
 const app = express();
 
+app.use(fileUpload({
+  createParentPath: true,
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}));
+
 app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(logger);
 
