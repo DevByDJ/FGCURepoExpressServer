@@ -6,7 +6,6 @@ const { json, req, res } = require('express');
 const saltRounds = 10; // adjust based on your needs
 const queries = require('../user/queries');
 const db = require('../../database');
-const { get } = require('http');
 
 const registerUser = async (request, response) => {
   try {
@@ -103,13 +102,13 @@ const loginUser = async (request, response) => {
 
 //looking for a single user
 const getUser = async (request, response) => {
-  const { email } = request.body;
+  const { id } = request.params;
   try{
-    if(!email) {
-      return response.status(400).send('Email required');
+    if(!id) {
+      return response.status(400).send('User is required to sign in');
     }
 
-    const results = await db.query(queries.getUserByEmail, [email]);
+    const results = await db.query(queries.getUserById, [id]);
 
     if(results.rowCount > 0) {
       response.status(200).json(results.rows[0]);
@@ -127,7 +126,9 @@ const updateUser = async (request, response) => {
   try {
     const { id } = request.params; 
     const validFields = Object.fromEntries(
-      Object.entries(request.body).filter(([_, value]) => value != null && value.trim() !== '')
+      Object.entries(request.body).filter(([_, value]) => 
+        typeof value === 'string' ? value != null && value.trim() !== '' : value != null
+      )
     );
 
     // Initialize the query parameters array
