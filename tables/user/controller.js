@@ -125,26 +125,27 @@ const getUser = async (request, response) => {
 
 const updateUser = async (request, response) => {
   try {
-    const { email, current_class, degree, full_name, internships_applied, internships_favorited, major, minor, photo_url, portfolio_link, profile_bio, role, social_media } = request.body;
+    const { id } = request.params; 
+    const validFields = Object.fromEntries(
+      Object.entries(request.body).filter(([_, value]) => value != null && value.trim() !== '')
+    );
 
     // Initialize the query parameters array
     const queryParams = [];
     let queryText = 'UPDATE "user" SET ';
 
-    // Dynamically build the query
-    for (let key in request.body) {
-      if (request.body.hasOwnProperty(key)) {
-        queryText += `${key} = $${queryParams.length + 1}, `;
-        queryParams.push(request.body[key]);
-      }
-    }
+    // Dynamically build the query with non-blank values
+    Object.entries(validFields).forEach(([key, value], index) => {
+      queryText += `${key} = $${index + 1}, `;
+      queryParams.push(value);
+    });
 
     // Remove the last comma and space
     queryText = queryText.slice(0, -2);
 
     // Add the WHERE clause
-    queryText += ' WHERE email = $' + (queryParams.length + 1);
-    queryParams.push(email);
+    queryText += ' WHERE id = $' + (queryParams.length + 1);
+    queryParams.push(id); // use id in the WHERE clause
 
     // Execute the query
     const result = await db.query(queryText, queryParams);

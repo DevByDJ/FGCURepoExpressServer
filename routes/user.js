@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.use(json());
 
-router.get('/', controller.getUser);
+router.get('/:id', controller.getUser);
 
 router.get('/all', controller.getUsers);
 
@@ -22,8 +22,8 @@ router.get('/:id/profile-photo', controller.getProfilePhoto)
 
 router.post('/:id/upload-image', controller.uploadImage);
 
-router.put('/', controller.updateUser);
+router.put('/:id', controller.updateUser);
 
-router.delete('/', controller.deleteUser);
+router.delete('/:id', controller.deleteUser);
 
 module.exports = router;
