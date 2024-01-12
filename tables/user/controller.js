@@ -6,6 +6,7 @@ const { json, req, res } = require('express');
 const saltRounds = 10; // adjust based on your needs
 const queries = require('../user/queries');
 const db = require('../../database');
+const { get } = require('http');
 
 const registerUser = async (request, response) => {
   try {
@@ -265,6 +266,25 @@ const generateUniqueFilename = (originalName) => {
   return `${Date.now()}-${hash}${fileExtension}`;
 };
 
+const getProfilePhoto = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.query(queries.getProfilePhoto, [id]);
+
+    if (result.rowCount === 0 || !result) {
+      return res.status(400).send('No profile photo found!');
+    }
+
+    // Get url
+    const photoUrl = result.rows[0].photo_url;
+    res.status(200).json({ photoUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error: Failed to get the profile photo');
+  }
+}
+
 const uploadImage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -315,5 +335,6 @@ module.exports = {
   getFavoritedInternships,
   insertFavoritedInternships,
   insertAppliedInternships,
+  getProfilePhoto,
   uploadImage,
 };
