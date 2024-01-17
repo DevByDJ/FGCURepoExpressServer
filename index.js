@@ -8,6 +8,7 @@ const internshipRouter = require('./routes/internship');
 const userRouter = require('./routes/user');
 const loginRouter = require('./routes/login');
 const registerRouter = require('./routes/register');
+const verifyRouter = require('./routes/verify');
 const cors = require('cors'); 
 
 // -- The utilities the application uses --
@@ -38,6 +39,8 @@ app.use('/api/user', userRouter);
 app.use('/api/login', loginRouter);
 
 app.use('/api/register', registerRouter);
+
+app.use('/api/verify', verifyRouter);
 
 app.use('/api/company', companyRouter);
 

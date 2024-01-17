@@ -1,18 +1,32 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const path = require('path');
-const fs = require('fs');
 const { json, req, res } = require('express');
 const saltRounds = 10; // adjust based on your needs
 const queries = require('../user/queries');
 const db = require('../../database');
+const nodemailer = require("nodemailer");
+require('dotenv').config()
+
+
+
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+    user: "DjosephNP@gmail.com",
+    pass: "ovaj gudn oiyi syue",
+  },
+});
+
 
 const registerUser = async (request, response) => {
   try {
-
     const {
       current_class, 
-      degree, 
       email,
       full_name, 
       internships_applied, 
@@ -30,18 +44,35 @@ const registerUser = async (request, response) => {
     // Check if the email is already be used..
     const emailExists = await db.query(queries.checkEmailExists, [email]);
     if (emailExists.rowCount > 0) {
-      return response.status(400).send('Email already exists');
+      return response.status(400).json({ message: 'Email already exists' });
     }
-  
+
+    // In your server-side registration code
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    // Save this token in your database alongside the user record
+
+    // Send an email with a verification link
+    const verificationLink = `http://localhost:8080/api/verify?token=${verificationToken}`;
+
+    const info = await transporter.sendMail({
+      from: '"fgcu.sec@gmail.com', // sender address
+      to: email, // list of receivers
+      subject: "FGCU Job Board Account Verification ✔", // Subject line
+      text: "Please click the link below to verify your account: " + verificationLink, // plain text body
+      html: `<b>Please click the link below to verify your account: </b> <a href="${verificationLink}">Verify Account</a>`, // html body
+    });
+     
     // Hash the password
     const hash = await bcrypt.hash(password, saltRounds);
   
-    result = await db.query(queries.insertUser, [current_class, degree, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, role, social_media]);
+    result = await db.query(queries.insertUser, [current_class, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, role, social_media, verificationToken]);
     
     if (result.rowCount === 0 || !result) {
-      return response.status(400).send('User not Registered!');
+      return response.status(400).json({ message: 'User Not Registered!' });
+
     }
 
+    console.log('info: ', info)
     
     response.status(200).json({ message: 'User Registered!' });
 
@@ -76,27 +107,38 @@ const loginUser = async (request, response) => {
   try{
 
     if(!email || !password) {
-      return response.status(400).send('Email and password required');
+      return response.status(400).json({ message: 'LOG IN FAILED!'});
     }
 
     const results = await db.query(queries.getUserByEmail, [email]);
 
     if (results.rowCount > 0) {
       const user = results.rows[0];
+      console.log('found user: ', user);
       const passwordMatch = await bcrypt.compare(password, user.password);
 
-      if (passwordMatch) {
-        response.status(200).json(user);
+      // Now check if the user has verified their email
+      if (user.email_verified === false) {
+        console.log('EMAIL NOT VERIFIED')
+        return response.status(400).json({ message: 'Please verify your email before logging in'});
       } else {
-        response.status(400).send('LOG IN FAILED!');
+        // Verify the password
+        if (passwordMatch) {
+          response.status(200).json(user);
+        } else {
+          response.status(400).json({ message: 'LOG IN FAILED!'});
+        }
+
       }
+
+      
     } else {
-      response.status(400).send('LOG IN FAILED!');
+      response.status(400).json({ message: 'LOG IN FAILED!'});
     }
 
   }catch(error){
     console.error(error);
-    response.status(500).send('Server error');
+    response.status(500).json({ message: 'LOG IN FAILED!'});
   }
 };
 
@@ -307,9 +349,6 @@ const uploadImage = async (req, res) => {
     // Move the file to the desired location
     await imageFile.mv(uploadPath);
 
-    // Check if the file exists and handle accordingly
-    // (Your existing logic here, if needed)
-
     // Save the path to the database
     const result = await db.query(queries.uploadImage, [uploadUrl, id]);
 
@@ -324,7 +363,23 @@ const uploadImage = async (req, res) => {
   }
 };
 
+const verifyUser = async (req, res) => {
+  const { token } = req.query;
 
+  try {
+    const result = await db.query(queries.verifyUser, [token]);
+
+    if (result.rowCount === 0 || !result) {
+      return res.status(400).send('Invalid or expired token.');
+    }
+
+    res.status(200).send('Email verified successfully.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error: Failed to verify the user');
+  }
+
+}
 
 module.exports = {
   registerUser,
@@ -339,4 +394,5 @@ module.exports = {
   insertAppliedInternships,
   getProfilePhoto,
   uploadImage,
+  verifyUser,
 };
