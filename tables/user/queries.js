@@ -1,8 +1,7 @@
-const { get } = require("mongoose");
-
 const deleteUser = 'DELETE FROM "user" WHERE id = $1'
 const insertUser = 'INSERT INTO "user" (current_class, degree, email, full_name, internships_applied, internships_favorited, major, minor, password, photo_url, portfolio_link, profile_bio, role, social_media) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)'
 const getAllUsers = 'SELECT * FROM "user"'
+const getUserByEmail = 'SELECT * FROM "user" WHERE email = $1'
 const getUserById = 'SELECT * FROM "user" WHERE id = $1'
 const checkEmailExists = 'SELECT email FROM "user" WHERE email = $1';
 const loginUser = 'SELECT u FROM user u WHERE u.email = $1 AND u.password = $2'
@@ -18,6 +17,7 @@ module.exports = {
   deleteUser,
   insertUser,
   getAllUsers,
+  getUserByEmail,
   getUserById,
   checkEmailExists,
   loginUser,
