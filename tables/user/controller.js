@@ -363,6 +363,58 @@ const uploadImage = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the email is already be used..
+    const emailExists = await db.query(queries.checkEmailExists, [email]);
+
+    if (!emailExists.rowCount) {
+      return response.status(400).json({ message: 'Email does not exist!' });
+    }
+
+  } catch (error){
+    console.error(error);
+    res.status(500).send('Server error: Failed to verify email');
+  }
+
+  try {
+    const verification_token = await db.query(queries.getVerificationToken, [email])
+
+    if (!verification_token.rowCount) {
+      return response.status(400).json({ message: 'Verification could not be completed!' });
+    }
+  } catch (error){
+    console.error(error);
+    res.status(500).send('Server error: Failed to verify email');
+  }
+
+  
+
+  
+
+  // Send an email with a verification link
+  const verificationLink = `http://localhost:8080/api/verify?token=${verificationToken}`;
+
+  try {
+    const info = await transporter.sendMail({
+      from: '"fgcu.sec@gmail.com', // sender address
+      to: email, // list of receivers
+      subject: "FGCU Job Board Account Verification ✔", // Subject line
+      text: "Please click the link below to verify your account: " + verificationLink, // plain text body
+      html: `<b>Please click the link below to verify your account: </b> <a href="${verificationLink}">Verify Account</a>`, // html body
+    });
+
+    res.status(200).json({ message: 'Email Verification has been sent!' });
+
+  }catch (error){
+    console.error(error);
+    res.status(500).send('Server error: Failed to send verification email');
+  }
+
+}
+
 const verifyUser = async (req, res) => {
   const { token } = req.query;
 
@@ -394,5 +446,6 @@ module.exports = {
   insertAppliedInternships,
   getProfilePhoto,
   uploadImage,
+  verifyEmail,
   verifyUser,
 };

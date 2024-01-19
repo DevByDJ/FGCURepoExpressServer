@@ -9,5 +9,7 @@ router.use(json())
 
 router.get('/', controller.verifyUser)
 
+router.post('/email', controller.verifyUser)
+
 
 module.exports = router
