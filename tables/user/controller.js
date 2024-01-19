@@ -37,7 +37,6 @@ const registerUser = async (request, response) => {
       photo_url, 
       portfolio_link, 
       profile_bio, 
-      role, 
       social_media,  
     } = request.body;
   
@@ -65,7 +64,7 @@ const registerUser = async (request, response) => {
     // Hash the password
     const hash = await bcrypt.hash(password, saltRounds);
   
-    result = await db.query(queries.insertUser, [current_class, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, role, social_media, verificationToken]);
+    result = await db.query(queries.insertUser, [current_class, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, social_media, verificationToken]);
     
     if (result.rowCount === 0 || !result) {
       return response.status(400).json({ message: 'User Not Registered!' });
