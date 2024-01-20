@@ -43,7 +43,7 @@ const registerUser = async (request, response) => {
     // Check if the email is already be used..
     const emailExists = await db.query(queries.checkEmailExists, [email]);
     if (emailExists.rowCount > 0) {
-      return response.status(400).json({ message: 'Email already exists' });
+      return response.status(400).json({ error: 'Email already exists' });
     }
 
     // In your server-side registration code
@@ -67,18 +67,16 @@ const registerUser = async (request, response) => {
     result = await db.query(queries.insertUser, [current_class, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, social_media, verificationToken]);
     
     if (result.rowCount === 0 || !result) {
-      return response.status(400).json({ message: 'User Not Registered!' });
+      return response.status(400).json({ error: 'User Not Registered!' });
 
     }
-
-    console.log('info: ', info)
     
     response.status(200).json({ message: 'User Registered!' });
 
 
   } catch (error) {
   console.error(error);
-  response.status(500).send('Server error: Failed to Register the User');
+  response.status(500).json({ error: 'Server error: Failed to Register the User'});
 }};
 
 //getting all students in db
@@ -370,28 +368,24 @@ const verifyEmail = async (req, res) => {
     const emailExists = await db.query(queries.checkEmailExists, [email]);
 
     if (!emailExists.rowCount) {
-      return response.status(400).json({ message: 'Email does not exist!' });
+      return response.status(400).json({ error: 'Email does not exist!' });
     }
 
   } catch (error){
     console.error(error);
-    res.status(500).send('Server error: Failed to verify email');
+    res.status(500).json({ error: 'Server error: Failed to verify email'});
   }
 
   try {
     const verification_token = await db.query(queries.getVerificationToken, [email])
 
     if (!verification_token.rowCount) {
-      return response.status(400).json({ message: 'Verification could not be completed!' });
+      return response.status(400).json({ error: 'Verification could not be completed!' });
     }
   } catch (error){
     console.error(error);
-    res.status(500).send('Server error: Failed to verify email');
+    res.status(500).json({ error: 'Server error: Failed to verify email' });
   }
-
-  
-
-  
 
   // Send an email with a verification link
   const verificationLink = `http://localhost:8080/api/verify?token=${verificationToken}`;
@@ -409,7 +403,7 @@ const verifyEmail = async (req, res) => {
 
   }catch (error){
     console.error(error);
-    res.status(500).send('Server error: Failed to send verification email');
+    res.status(500).json({ error: 'Server error: Failed to send verification email'});
   }
 
 }
@@ -421,15 +415,76 @@ const verifyUser = async (req, res) => {
     const result = await db.query(queries.verifyUser, [token]);
 
     if (result.rowCount === 0 || !result) {
-      return res.status(400).send('Invalid or expired token.');
+      return res.status(400).json({ error: 'Invalid or expired token.'});
     }
 
-    res.status(200).send('Email verified successfully.');
+    res.status(200).json({ message: 'Email verified successfully.'});
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server error: Failed to verify the user');
+    res.status(500).json({ error: 'Server error: Failed to verify the user'});
   }
 
+}
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the email is already be used..
+    const emailExists = await db.query(queries.checkEmailExists, [email]);
+
+    if (!emailExists.rowCount) {
+      return response.status(400).json({ error: 'Email does not exist!' });
+    }
+
+    // In your server-side registration code
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    // Save this token in your database alongside the user record
+
+    // Send an email with a verification link
+    const resetPasswordLink = `http://localhost:3000/reset-password?token=${verificationToken}`;
+
+    const result = await db.query(queries.insertVerificationToken, [verificationToken, email]);
+
+    if (result.rowCount === 0 || !result) {
+      return res.status(400).json({ error: 'Invalid or expired token.'});
+    }
+
+    const info = await transporter.sendMail({
+      from: '"fgcu.sec@gmail.com', // sender address
+      to: email, // list of receivers
+      subject: "Reset Password -- SEC Job Board", // Subject line
+      text: "Please click the link below to reset your password: " + resetPasswordLink, // plain text body
+      html: `<b>Please click the link below to reset your password: </b> <a href="${resetPasswordLink}">Reset Password</a>`, // html body
+    });
+
+    res.status(200).json({ message: 'Password Reset Email has been sent!'});
+
+  } catch (error){
+    console.error(error);
+    res.status(500).json({ error: 'Server error: Failed to Send Password Email'});
+  }
+
+}
+
+const resetPassword = async (req, res) => {
+  const { password, token } = req.body;
+
+  try {
+    // Hash the password
+    const hash = await bcrypt.hash(password, saltRounds);
+
+    const result = await db.query(queries.updateUserPassword, [hash, token]);
+
+    if (result.rowCount === 0 || !result) {
+      return res.status(400).json({ error: 'Invalid or expired token.'});
+    }
+
+    res.status(200).json({ message: 'Password Reset Successfully.'});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Server error: Failed to Reset Password!'});
+  }
 }
 
 module.exports = {
@@ -447,4 +502,6 @@ module.exports = {
   uploadImage,
   verifyEmail,
   verifyUser,
+  forgotPassword,
+  resetPassword,
 };

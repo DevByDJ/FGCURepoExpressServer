@@ -9,6 +9,8 @@ const userRouter = require('./routes/user');
 const loginRouter = require('./routes/login');
 const registerRouter = require('./routes/register');
 const verifyRouter = require('./routes/verify');
+const fpRouter = require('./routes/forgot-password');
+const rpRouter = require('./routes/reset-password');
 const cors = require('cors'); 
 
 // -- The utilities the application uses --
@@ -41,6 +43,10 @@ app.use('/api/login', loginRouter);
 app.use('/api/register', registerRouter);
 
 app.use('/api/verify', verifyRouter);
+
+app.use('/api/forgot-password', fpRouter);
+
+app.use('/api/reset-password', rpRouter);
 
 app.use('/api/company', companyRouter);
 

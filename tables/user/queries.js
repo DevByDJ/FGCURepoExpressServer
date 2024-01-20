@@ -14,6 +14,8 @@ const insertAppliedInternships = 'UPDATE "user" SET internships_applied = array_
 const getProfilePhoto = 'SELECT photo_url FROM "user" WHERE id = $1';
 const uploadImage = 'UPDATE "user" SET photo_url = $1 WHERE id = $2';
 const verifyUser = 'UPDATE "user" SET email_verified = true WHERE verification_token = $1';
+const insertVerificationToken = 'UPDATE "user" SET verification_token = $1 WHERE email = $2';
+const updateUserPassword = 'UPDATE "user" SET password = $1 WHERE verification_token = $2';
 
 module.exports = {
   deleteUser,
@@ -32,4 +34,6 @@ module.exports = {
   getProfilePhoto,
   uploadImage,
   verifyUser,
+  insertVerificationToken,
+  updateUserPassword,
 }
