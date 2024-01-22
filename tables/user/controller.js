@@ -6,6 +6,7 @@ const saltRounds = 10; // adjust based on your needs
 const queries = require('../user/queries');
 const db = require('../../database');
 const nodemailer = require("nodemailer");
+const log = require('../../logger');
 require('dotenv').config()
 
 
@@ -111,12 +112,12 @@ const loginUser = async (request, response) => {
 
     if (results.rowCount > 0) {
       const user = results.rows[0];
-      console.log('found user: ', user);
+      log('found user: ', user);
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       // Now check if the user has verified their email
       if (user.email_verified === false) {
-        console.log('EMAIL NOT VERIFIED')
+        log('EMAIL NOT VERIFIED')
         return response.status(400).json({ message: 'Please verify your email before logging in'});
       } else {
         // Verify the password
@@ -331,7 +332,7 @@ const uploadImage = async (req, res) => {
     const { id } = req.params;
     const imageFile = req.files.image; // Access the file from req.files
 
-    console.log('Uploaded File: ', imageFile);
+    log('Uploaded File: ', imageFile);
 
     if (!imageFile) {
       return res.status(400).send('No file uploaded');
@@ -376,15 +377,12 @@ const verifyEmail = async (req, res) => {
     res.status(500).json({ error: 'Server error: Failed to verify email'});
   }
 
-  try {
-    const verification_token = await db.query(queries.getVerificationToken, [email])
+  const verificationToken = crypto.randomBytes(32).toString('hex');
 
-    if (!verification_token.rowCount) {
-      return response.status(400).json({ error: 'Verification could not be completed!' });
-    }
-  } catch (error){
-    console.error(error);
-    res.status(500).json({ error: 'Server error: Failed to verify email' });
+  const result = await db.query(queries.insertVerificationToken, [verificationToken, email]);
+
+  if (result.rowCount === 0 || !result) {
+    return res.status(400).json({ error: 'Invalid or expired token.'});
   }
 
   // Send an email with a verification link

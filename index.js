@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const log = require('./logger');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const tagRouter = require('./routes/tag');
@@ -53,12 +54,12 @@ app.use('/api/company', companyRouter);
 app.use('/api/internship', internshipRouter);
 
 app.get('/', (req, res) => {
-  console.log('Server is running..');
+  log('Server is running..');
 });
 
 // -- Middleware that tracks the actions in the application --
 function logger(req, res, next) {
-  console.log(`The current URL path is: ${req.originalUrl}`);
+  log(`The current URL path is: ${req.originalUrl}`);
   next();
 }
 

@@ -1,4 +1,6 @@
 const dotenv = require('dotenv');
+const log = require('./logger');
+
 
 dotenv.config();
 
