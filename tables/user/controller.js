@@ -7,6 +7,7 @@ const queries = require('../user/queries');
 const db = require('../../database');
 const nodemailer = require("nodemailer");
 const log = require('../../logger');
+const fs = require('fs').promises;
 require('dotenv').config()
 
 
@@ -88,13 +89,19 @@ const getUsers = async (request, response) => {
     const allUsers = await db.query(queries.getAllUsers);
 
     if(!allUsers.rows.length) 
-    return response.status(404).send('No users found');
+    return response.status(404).json({ error: 'No users found'});
 
-    response.status(200).json({users: allUsers.rows});
+    // Remove the password from each user
+    const users = allUsers.rows.map(user => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+
+    response.status(200).json({users: users});
 
   } catch (error) {
     console.error(error);
-    response.status(500).send('Server error');
+    response.status(500).json({error: 'Server error: Could not get users'});
 
   }
   
@@ -341,8 +348,20 @@ const uploadImage = async (req, res) => {
     // Generate a unique filename
     const uniqueFilename = generateUniqueFilename(imageFile.name);
     const port = process.env.PORT || 8080; 
-    const uploadUrl = `http://localhost:${port}/uploads/${uniqueFilename}`;
-    const uploadPath = path.join(__dirname, '../../uploads', uniqueFilename);
+    const uploadUrl = `http://localhost:${port}/uploads/${id}/${uniqueFilename}`;
+    const directoryPath = path.join(__dirname, `../../uploads/${id}`);
+    const uploadPath = path.join(__dirname, `../../uploads/${id}`, uniqueFilename);
+
+    // Create the directory if it doesn't exist
+    await fs.mkdir(directoryPath, { recursive: true });
+
+    // Check if a file already exists in the directory
+    const files = await fs.readdir(directoryPath);
+
+    // If a file exists, delete it
+    if (files.length > 0) {
+      await fs.unlink(path.join(directoryPath, files[0]));
+    }
 
     // Move the file to the desired location
     await imageFile.mv(uploadPath);

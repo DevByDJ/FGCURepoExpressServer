@@ -8,6 +8,7 @@ const companyRouter = require('./routes/company');
 const internshipRouter = require('./routes/internship');
 const userRouter = require('./routes/user');
 const loginRouter = require('./routes/login');
+const postRouter = require('./routes/post');
 const registerRouter = require('./routes/register');
 const verifyRouter = require('./routes/verify');
 const fpRouter = require('./routes/forgot-password');
@@ -52,6 +53,8 @@ app.use('/api/reset-password', rpRouter);
 app.use('/api/company', companyRouter);
 
 app.use('/api/internship', internshipRouter);
+
+app.use('/api/post', postRouter);
 
 app.get('/', (req, res) => {
   log('Server is running..');
