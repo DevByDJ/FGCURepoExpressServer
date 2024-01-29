@@ -83,31 +83,36 @@ const updatePost = async (req, res) => {
 }
 
 const deletePost = async (req, res) => {
+  const client = await db.pool.connect(); // Get a client from the pool
+
   try {
     const { id } = req.params;
-    const post = await db.query(queries.deletePost, [id]);
+    await client.query('BEGIN'); // Begin transaction
+    
+    // Perform the transaction operations
+    await client.query('DELETE FROM comment WHERE post_id = $1', [id]);
+    const result = await client.query('DELETE FROM post WHERE id = $1 RETURNING *', [id]);
 
-    if(!post) 
-    {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Post Could Not Be Deleted!',
-      });
+    if (result.rowCount === 0) {
+      throw new Error('Post not found');
     }
 
+    await client.query('COMMIT'); // Commit transaction
     res.status(200).json({
       status: 'success',
       message: 'Post Deleted',
-      payload: post,
+      payload: result.rows[0],
     });
-
   } catch (err) {
+    await client.query('ROLLBACK'); // Rollback transaction on error
     res.status(500).json({
       status: 'error',
       message: err.message,
     });
+  } finally {
+    client.release(); // Release the client back to the pool
   }
-}
+};
 
 const getLikesForPost = async (req, res) => {
   try {

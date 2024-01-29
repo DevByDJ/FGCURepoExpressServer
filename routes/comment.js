@@ -8,7 +8,11 @@ router.use(json());
 
 router.get('/', commentController.getComments);
 
+router.get('/:id/fetch-likes', commentController.getLikesForComment);
+
 router.post('/', commentController.createComment);
+
+router.post('/:id/like', commentController.likeComment);
 
 router.put('/:id', commentController.updateComment);
 
