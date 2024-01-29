@@ -4,21 +4,57 @@ const db = require('../../database');
 const getComments = async (req, res) => {
   try {
     const post_id = req.query.post_id;
-    const comments = await db.query(queries.getComments, [post_id]); 
+    const event_id = req.query.event_id;
 
-    if(!comments.rows) 
+    if(!post_id && !event_id) 
     {
       return res.status(404).json({
         status: 'error',
-        message: 'Comments not found',
+        message: 'Post ID or Event ID Not Found!',
       });
     }
 
-    res.status(200).json({
-      status: 'success',
-      message: 'All Comments',
-      payload: comments.rows,
-    });
+    // If the request is for an post
+    if(post_id) {
+
+      const comments = await db.query(queries.getPostComments, [post_id]); 
+
+      if(!comments.rows) 
+      {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Comments not found',
+        });
+      }
+
+      res.status(200).json({
+        status: 'success',
+        message: 'All Comments',
+        payload: comments.rows,
+      });
+
+    }
+
+    // If the request is for an event
+    if(event_id) {
+
+      const comments = await db.query(queries.getEventComments, [event_id]); 
+
+      if(!comments.rows) 
+      {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Comments not found',
+        });
+      }
+
+      res.status(200).json({
+        status: 'success',
+        message: 'All Comments',
+        payload: comments.rows,
+      });
+
+    } 
 
   } catch (err) {
     res.status(500).json({
@@ -32,21 +68,53 @@ const createComment = async (req, res) => {
   try {
     const { content, user_id } = req.body;
     const post_id = req.query.post_id;
-    const comment = await db.query(queries.createComment, [content, user_id, post_id]);
+    const event_id = req.query.event_id;
 
-    if(!comment) 
-    {
+    if(!post_id && !event_id){
       return res.status(404).json({
         status: 'error',
-        message: 'Comment Could Not Be Created!',
+        message: 'Post ID or Event ID Not Found!',
       });
     }
 
-    res.status(200).json({
-      status: 'success',
-      message: 'Comment created',
-      payload: comment,
-    });
+    if(post_id){
+      const comment = await db.query(queries.createPostComment, [content, user_id, post_id]);
+
+      if(!comment) 
+      {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Comment Could Not Be Created!',
+        });
+      }
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Comment created',
+        payload: comment,
+      });
+
+    }
+
+    if(event_id){
+      const comment = await db.query(queries.createEventComment, [content, user_id, event_id]);
+
+      if(!comment) 
+      {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Comment Could Not Be Created!',
+        });
+      }
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Comment created',
+        payload: comment,
+      });
+
+    }
+
 
   } catch (err) {
     res.status(500).json({
