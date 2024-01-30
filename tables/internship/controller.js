@@ -102,8 +102,8 @@ const transferInternshipsFromMongoToPostgres = async (request, response) => {
       const values = [
         internship._id, // Or generate a new ID
         internship.employer_name,
-        internship.employer_company_type,
         internship.employer_logo,
+        internship.employer_company_type,
         internship.employer_website,
         internship.job_id,
         internship.job_apply_quality_score,
@@ -167,8 +167,8 @@ const saveInternship = async (internship) => {
     const values = [
       id,
       internship.employer_name,
-      internship.employer_company_type,
       internship.employer_logo,
+      internship.employer_company_type,
       internship.employer_website,
       internship.job_id,
       internship.job_apply_quality_score,
