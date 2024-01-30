@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model account {
+  id                 String    @id
+  userId             Int
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime
+  user               user      @relation(fields: [userId], references: [id])
+}
+
+model comment {
+  id             Int      @id @default(autoincrement())
+  text           String
+  fk_user_id     Int
+  event_id       Int?
+  post_id        Int?
+  liked_by_users Int[]
+  created_at     DateTime @default(now())
+  event          event?   @relation(fields: [event_id], references: [id])
+  user           user     @relation(fields: [fk_user_id], references: [id])
+  post           post?    @relation(fields: [post_id], references: [id])
+}
+
+model event {
+  id             Int       @id @default(autoincrement())
+  content        String
+  fk_user_id     Int
+  header         String
+  image          String?
+  location       String
+  organization   String
+  type           String
+  url            String?
+  liked_by_users Int[]
+  created_at     DateTime  @default(now())
+  end_date       DateTime
+  start_date     DateTime
+  comment        comment[]
+  user           user      @relation(fields: [fk_user_id], references: [id])
+}
+
+model internships {
+  id                         String    @id
+  employer_name              String
+  employer_logo              String?
+  employer_company_type      String?
+  employer_website           String?
+  job_id                     String
+  job_apply_quality_score    Float?
+  job_publisher              String?
+  job_employment_type        String?
+  job_title                  String?
+  job_apply_link             String?
+  job_description            String?
+  job_is_remote              Boolean?
+  job_required_skills        Json?
+  job_posted_at_timestamp    Int?
+  job_posted_at_datetime_utc DateTime?
+  job_city                   String?
+  job_state                  String?
+  job_country                String?
+  job_benefits               Json?
+  job_highlights             Json?
+  job_job_title              String?
+  job_min_salary             Float?
+  job_max_salary             Float?
+}
+
+model post {
+  id             Int       @id @default(autoincrement())
+  created_at     DateTime  @default(now())
+  text           String
+  fk_user_id     Int
+  liked_by_users Int[]
+  comment        comment[]
+  user           user      @relation(fields: [fk_user_id], references: [id])
+}
+
+model session {
+  id           String   @id
+  userId       Int
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  user         user     @relation(fields: [userId], references: [id])
+}
+
+model user {
+  id                    Int       @id @default(autoincrement())
+  email                 String    @unique
+  internships_applied   String[]
+  internships_favorited String[]
+  major                 String?
+  minor                 String?
+  password              String
+  photo_url             String?
+  portfolio_link        String?
+  profile_bio           String?
+  role                  String?   @default("user")
+  social_media          String?
+  current_class         String?
+  full_name             String
+  email_verified        Boolean   @default(false)
+  verification_token    String?
+  account               account[]
+  comment               comment[]
+  event                 event[]
+  post                  post[]
+  session               session[]
+}

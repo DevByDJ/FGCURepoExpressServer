@@ -47,33 +47,21 @@ router.post('/search', async (req, res) => {
   }
 });
 
-router.get('/all', async (req, res) => {
-  
-  controller.getAllInternships()
-    .then((internships) => {
-      res.status(201).json(internships);
-    })
-    .catch((error) => {
-      console.error('Error retrieving all internships: ', error);
-      res.status(500).send('Error retrieving all internships');
-    });
+router.delete('/old', controller.deleteOldInternships);
 
+router.post('/', async (req, res) => {
+  try {
+    await controller.saveInternship(req.body);
+    res.status(201).json({ message: 'Internship saved successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while saving the internship.' });
+  }
 });
 
-// router.post('/', controller.createInternsip);
+router.get('/all', controller.getAllInternships);
 
-router.delete('/old', async (req, res) => {
 
-  const timestamp = new Date().toISOString();
-  controller.deleteOldInternships()
-  .then((internships) => {
-    res.status(201).json(internships, timestamp);
-  })
-  .catch((error) => {
-    console.error('Error Deleting Old Internships:', error);
-    res.status(500).send('Error Deleting Old Internships');
-  });
-
-});
+router.post('/transfer', controller.transferInternshipsFromMongoToPostgres);
 
 module.exports = router;
