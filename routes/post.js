@@ -8,6 +8,8 @@ router.use(json());
 
 router.get('/', postController.getPosts);
 
+router.get('/:userId', postController.getPostsByUser);
+
 router.get('/:id/fetch-likes', postController.getLikesForPost);
 
 router.post('/', postController.createPost);

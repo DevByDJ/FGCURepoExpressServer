@@ -8,6 +8,8 @@ router.use(json());
 
 router.get('/', eventController.getEvents);
 
+router.get('/:userId', eventController.getEventsByUser);
+
 router.get('/:id/fetch-likes', eventController.getLikesForEvent);
 
 router.post('/', eventController.createEvent);

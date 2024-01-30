@@ -1,5 +1,8 @@
+const crypto = require('crypto');
 const queries = require('../event/queries');
 const db = require('../../database');
+const path = require('path');
+const fs = require('fs').promises;
 
 const getEvents = async (req, res) => {
   try {
@@ -27,11 +30,46 @@ const getEvents = async (req, res) => {
   }
 }
 
+getEventsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const events = await db.query(queries.getEventsByUser, [userId]); 
+
+    if(!events.rows) 
+    {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Events not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'All Events',
+      payload: events.rows,
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+
+}
+
+const generateUniqueFilename = (originalName) => {
+  const fileExtension = path.extname(originalName);
+  const hash = crypto.randomBytes(16).toString('hex');
+  return `${Date.now()}-${hash}${fileExtension}`;
+};
+
 const createEvent = async (req, res) => {
   try {
     const { end_date, start_date, content, fk_user_id, header, type, organization, location, url } = req.body;
 
     const imageFile = req.files.image;
+
     let uniqueFilename
     let port
     let uploadUrl
@@ -242,6 +280,7 @@ const likeEvent = async (req, res) => {
 
 module.exports = {
   getEvents,
+  getEventsByUser,
   createEvent,
   updateEvent,
   deleteEvent,

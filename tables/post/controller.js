@@ -27,6 +27,34 @@ const getPosts = async (req, res) => {
   }
 }
 
+getPostsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const posts = await db.query(queries.getPostsByUser, [userId]); 
+
+    if(!posts.rows) 
+    {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Posts not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'All posts',
+      payload: posts.rows,
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+
+}
+
 const createPost = async (req, res) => {
   try {
     const { content, user_id } = req.body;
@@ -209,6 +237,7 @@ const likePost = async (req, res) => {
 
 module.exports = {
   getPosts,
+  getPostsByUser,
   createPost,
   updatePost,
   deletePost,
