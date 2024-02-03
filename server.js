@@ -6,7 +6,7 @@ dotenv.config();
 
 const app = require('./index');
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 const host = process.env.HOST || 'localhost';
 
 app.listen(port, () => {
