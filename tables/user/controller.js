@@ -347,8 +347,7 @@ const uploadImage = async (req, res) => {
 
     // Generate a unique filename
     const uniqueFilename = generateUniqueFilename(imageFile.name);
-    const port = process.env.PORT || 8080; 
-    const uploadUrl = `http://localhost:${port}/uploads/${id}/${uniqueFilename}`;
+    const uploadUrl = `https://cache-it.com/uploads/${id}/${uniqueFilename}`;
     const directoryPath = path.join(__dirname, `../../uploads/${id}`);
     const uploadPath = path.join(__dirname, `../../uploads/${id}`, uniqueFilename);
 
