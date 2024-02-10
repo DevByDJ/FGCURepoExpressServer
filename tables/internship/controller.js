@@ -144,14 +144,14 @@ const transferInternshipsFromMongoToPostgres = async (request, response) => {
 const deleteOldInternships = async (request, response) => {
   try {
     const thresholdDate = new Date();
-    thresholdDate.setMonth(thresholdDate.getMonth() - 6); // for example, 6 months ago
+    thresholdDate.setMonth(thresholdDate.getMonth() - 3); // for example, 6 months ago
 
     const result = await db.query(queries.deleteOldInternships, [thresholdDate.toISOString()]);
 
     response.status(200).json({ message: `Deleted ${result.rowCount} old internships.` });
   } catch (error) {
     console.error(error);
-    response.status(500).send('Server error: Failed to delete old internships');
+    response.status(500).json({ message: `Server error: Failed to delete old internships ${error}`});
   }
 };
 
