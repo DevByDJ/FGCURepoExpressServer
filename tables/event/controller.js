@@ -68,13 +68,13 @@ const createEvent = async (req, res) => {
   try {
     const { end_date, start_date, content, fk_user_id, header, type, organization, location, url } = req.body;
 
-    const imageFile = req.files.image;
+    const imageFile = req.files ? req.files.image : null;
 
-    let uniqueFilename
-    let port
-    let uploadUrl
-    let directoryPath
-    let uploadPath
+    let uniqueFilename;
+    let port;
+    let uploadUrl = null;
+    let directoryPath;
+    let uploadPath;
 
     if (imageFile) {
       // Generate a unique filename
@@ -99,21 +99,18 @@ const createEvent = async (req, res) => {
       await imageFile.mv(uploadPath);
     }
 
-
     const event = await db.query(queries.createEvent, [end_date, start_date, content, fk_user_id, header, type, organization, location, url, uploadUrl]);
 
-
-    if(!event) 
-    {
+    if(!event) {
       return res.status(404).json({
         status: 'error',
-        message: 'event Could Not Be Created!',
+        message: 'Event could not be created!',
       });
     }
 
     res.status(200).json({
       status: 'success',
-      message: 'event created',
+      message: 'Event created',
       payload: event,
     });
 
@@ -124,7 +121,7 @@ const createEvent = async (req, res) => {
       message: err.message,
     });
   }
-}
+};
 
 const updateEvent = async (req, res) => {
   try {
