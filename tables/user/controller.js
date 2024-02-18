@@ -111,6 +111,9 @@ const loginUser = async (request, response) => {
   const { email, password } = request.body;
   try{
 
+    console.log('email: ', email);
+    console.log('password: ', password);
+
     if(!email || !password) {
       return response.status(400).json({ message: 'LOG IN FAILED!'});
     }
