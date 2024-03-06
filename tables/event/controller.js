@@ -71,7 +71,6 @@ const createEvent = async (req, res) => {
     const imageFile = req.files ? req.files.image : null;
 
     let uniqueFilename;
-    let port;
     let uploadUrl = null;
     let directoryPath;
     let uploadPath;
@@ -79,8 +78,7 @@ const createEvent = async (req, res) => {
     if (imageFile) {
       // Generate a unique filename
       uniqueFilename = generateUniqueFilename(imageFile.name);
-      port = process.env.PORT || 8080; 
-      uploadUrl = `http://localhost:${port}/uploads/events/${fk_user_id}/${uniqueFilename}`;
+      uploadUrl = `https://api.cache-it.com/uploads/events/${fk_user_id}/${uniqueFilename}`;
       directoryPath = path.join(__dirname, `../../uploads/events/${fk_user_id}`);
       uploadPath = path.join(__dirname, `../../uploads/events/${fk_user_id}`, uniqueFilename);
 
