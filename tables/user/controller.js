@@ -56,7 +56,7 @@ const registerUser = async (request, response) => {
     // Save this token in your database alongside the user record
 
     // Send an email with a verification link
-    const verificationLink = `http://localhost:8080/api/verify?token=${verificationToken}`;
+    const verificationLink = `https://api.cache-it.com/api/verify?token=${verificationToken}`;
 
     const info = await transporter.sendMail({
       from: '"fgcu.sec@gmail.com', // sender address
@@ -134,21 +134,21 @@ const loginUser = async (request, response) => {
       } else {
         // Verify the password
         if (passwordMatch) {
-          response.status(200).json(user);
+          return response.status(200).json(user);
         } else {
-          response.status(400).json({ message: 'LOG IN FAILED!'});
+          return response.status(400).json({ message: 'LOG IN FAILED!'});
         }
 
       }
 
       
     } else {
-      response.status(400).json({ message: 'LOG IN FAILED!'});
+      return response.status(401).json({ message: 'Invalid email or password.' });
     }
 
   }catch(error){
     console.error(error);
-    response.status(500).json({ message: 'LOG IN FAILED!'});
+    return response.status(500).json({ message: 'LOG IN FAILED!'});
   }
 };
 
@@ -411,7 +411,7 @@ const verifyEmail = async (req, res) => {
   }
 
   // Send an email with a verification link
-  const verificationLink = `http://localhost:8080/api/verify?token=${verificationToken}`;
+  const verificationLink = `https://api.cache-it.com/api/verify?token=${verificationToken}`;
 
   try {
     const info = await transporter.sendMail({
@@ -465,7 +465,7 @@ const forgotPassword = async (req, res) => {
     // Save this token in your database alongside the user record
 
     // Send an email with a verification link
-    const resetPasswordLink = `http://localhost:3000/reset-password?token=${verificationToken}`;
+    const resetPasswordLink = `https://api.cache-it.com/reset-password?token=${verificationToken}`;
 
     const result = await db.query(queries.insertVerificationToken, [verificationToken, email]);
 
