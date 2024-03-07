@@ -41,6 +41,9 @@ const registerUser = async (request, response) => {
       profile_bio, 
       social_media,  
     } = request.body;
+
+    // Only lowercase emails for simplicity and consistency
+    email = email.toLowerCase();
   
     // Check if the email is already be used..
     const emailExists = await db.query(queries.checkEmailExists, [email]);
@@ -111,12 +114,11 @@ const loginUser = async (request, response) => {
   const { email, password } = request.body;
   try{
 
-    console.log('email: ', email);
-    console.log('password: ', password);
-
     if(!email || !password) {
       return response.status(400).json({ message: 'LOG IN FAILED!'});
     }
+
+    email = email.toLowerCase();
 
     const results = await db.query(queries.getUserByEmail, [email]);
 
