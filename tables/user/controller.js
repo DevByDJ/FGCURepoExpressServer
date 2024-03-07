@@ -322,6 +322,8 @@ const getProfilePhoto = async (req, res) => {
   try {
     const { id } = req.params;
 
+    console.log(req.params); // Should show { id: 'some-value' }
+
     const result = await db.query(queries.getProfilePhoto, [id]);
 
     if (result.rowCount === 0 || !result) {
