@@ -27,7 +27,7 @@ const transporter = nodemailer.createTransport({
 
 const registerUser = async (request, response) => {
   try {
-    const {
+    let {
       current_class, 
       email,
       full_name, 
@@ -111,7 +111,7 @@ const getUsers = async (request, response) => {
 };
 
 const loginUser = async (request, response) => {
-  const { email, password } = request.body;
+  let { email, password } = request.body;
   try{
 
     if(!email || !password) {
