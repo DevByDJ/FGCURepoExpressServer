@@ -465,7 +465,7 @@ const forgotPassword = async (req, res) => {
     // Save this token in your database alongside the user record
 
     // Send an email with a verification link
-    const resetPasswordLink = `https://api.cache-it.com/reset-password?token=${verificationToken}`;
+    const resetPasswordLink = `https://cache-it.com/reset-password?token=${verificationToken}`;
 
     const result = await db.query(queries.insertVerificationToken, [verificationToken, email]);
 
