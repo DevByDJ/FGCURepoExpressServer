@@ -25,6 +25,10 @@ const getAllInternships = `
   SELECT * FROM internships;
 `;
 
+const insertInternshipViewed = 'UPDATE "user" SET internships_viewed = array_append(internships_viewed, $1) WHERE id = $2';
+const insertUserView = 'UPDATE internships SET user_views = array_append(user_views, $1) WHERE id = $2';
+
+
 module.exports = {
   getAppliedInternships,
   getFavoritedInternships,
@@ -34,4 +38,6 @@ module.exports = {
   insertInternship,
   deleteOldInternships,
   getAllInternships,
+  insertInternshipViewed,
+  insertUserView,
 }

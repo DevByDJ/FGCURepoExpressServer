@@ -85,6 +85,7 @@ model internships {
   job_job_title              String?
   job_min_salary             Float?
   job_max_salary             Float?
+  user_views                 Int[]
 }
 
 model post {
@@ -110,9 +111,13 @@ model session {
 
 model user {
   id                    Int       @id @default(autoincrement())
+  created_at            DateTime  @default(now())
+  companies_viewed      Int
   email                 String    @unique
   internships_applied   String[]
   internships_favorited String[]
+  internships_viewed    String[]
+  last_login            DateTime?
   major                 String?
   minor                 String?
   password              String
@@ -130,4 +135,17 @@ model user {
   event                 event[]
   post                  post[]
   session               session[]
+}
+
+model userAnalytics {
+  id                 Int      @id @default(autoincrement())
+  total_users        Int
+  total_liked        Int
+  total_applied      Int
+  total_posts        Int
+  total_events       Int
+  internships_viewed Int
+  companies_viewed   Int
+  active_users       Int
+  created_at         DateTime @default(now())
 }

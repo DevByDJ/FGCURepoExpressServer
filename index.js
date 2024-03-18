@@ -3,6 +3,7 @@ const express = require('express');
 const log = require('./logger');
 const fileUpload = require('express-fileupload');
 const path = require('path');
+const analyticsRouter = require('./routes/analytics');
 const tagRouter = require('./routes/tag');
 const companyRouter = require('./routes/company');
 const internshipRouter = require('./routes/internship');
@@ -37,6 +38,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(logger);
 
 // -- Routers --
+app.use('/api/analytics', analyticsRouter);
 
 app.use('/api/tag', tagRouter);
 

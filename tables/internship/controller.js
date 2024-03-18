@@ -84,6 +84,32 @@ const insertAppliedInternships = async (request, response) => {
   } 
 };
 
+const insertViewedInternship = async (request, response) => {
+  try {
+    const { user_id } = request.params;
+    const { internship_id } = request.body; 
+
+    const resInternshipTable = await db.query(queries.insertInternshipViewed, [internship_id, user_id]);
+    const resUserTable = await db.query(queries.insertUserView, [user_id, internship_id]);
+
+
+    if (resInternshipTable.rowCount === 0) {
+      return response.status(400).send('Viewed Internship was not Added to the Internship Table!');
+    }
+
+    if (resUserTable.rowCount === 0) {
+      return response.status(400).send('Viewed Internship was not Added to the User Table!');
+    }
+
+    response.status(200).json({ message: 'Viewed Internship was Added to the Internship and User Table!' });
+
+  } catch (error) {
+    console.error(error);
+    response.status(500).send('Server error: Failed to Add Views to the Internship and User Table');
+  } 
+
+}
+
 const transferInternshipsFromMongoToPostgres = async (request, response) => {
   try {
     // Fetch data from MongoDB
@@ -214,6 +240,7 @@ module.exports = {
   getFavoritedInternships,
   insertFavoritedInternships,
   insertAppliedInternships,
+  insertViewedInternship,
   transferInternshipsFromMongoToPostgres,
   deleteOldInternships,
   saveInternship,

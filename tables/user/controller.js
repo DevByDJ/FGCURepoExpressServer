@@ -134,6 +134,9 @@ const loginUser = async (request, response) => {
       } else {
         // Verify the password
         if (passwordMatch) {
+          // Update the last login time
+          const lastLogin = new Date().toISOString();
+          await db.query(queries.updateLastLogin, [lastLogin, email]);
           return response.status(200).json(user);
         } else {
           return response.status(400).json({ message: 'LOG IN FAILED!'});

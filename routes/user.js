@@ -19,6 +19,12 @@ router.get('/:id/favorited-internships', internshipController.getFavoritedIntern
 
 router.post('/:id/favorited-internships', internshipController.insertFavoritedInternships);
 
+router.post('/:id/internship-viewed', internshipController.insertViewedInternship);
+
+// router.post('/:id/companies-viewed', internshipController.insertViewedCompany);
+
+// router.post('/:id/profiles-viewed', userController.insertViewedProfile);
+
 router.get('/:id/profile-photo', userController.getProfilePhoto)
 
 router.post('/:id/upload-image', userController.uploadImage);
