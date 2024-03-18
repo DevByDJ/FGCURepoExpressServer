@@ -44,6 +44,8 @@ const registerUser = async (request, response) => {
 
     // Only lowercase emails for simplicity and consistency
     email = email.toLowerCase();
+    let companies_viewed = [];
+    let internships_viewed = [];
   
     // Check if the email is already be used..
     const emailExists = await db.query(queries.checkEmailExists, [email]);
@@ -69,7 +71,7 @@ const registerUser = async (request, response) => {
     // Hash the password
     const hash = await bcrypt.hash(password, saltRounds);
   
-    result = await db.query(queries.insertUser, [current_class, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, social_media, verificationToken]);
+    result = await db.query(queries.insertUser, [current_class, email, full_name, internships_applied, internships_favorited, major, minor, hash, photo_url, portfolio_link, profile_bio, social_media, verificationToken, internships_viewed, companies_viewed]);
     
     if (result.rowCount === 0 || !result) {
       return response.status(400).json({ error: 'User Not Registered!' });

@@ -112,7 +112,7 @@ model session {
 model user {
   id                    Int       @id @default(autoincrement())
   created_at            DateTime  @default(now())
-  companies_viewed      Int
+  companies_viewed      String[]
   email                 String    @unique
   internships_applied   String[]
   internships_favorited String[]

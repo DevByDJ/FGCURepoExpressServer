@@ -1,5 +1,5 @@
 const deleteUser = 'DELETE FROM "user" WHERE id = $1'
-const insertUser = 'INSERT INTO "user" (current_class, email, full_name, internships_applied, internships_favorited, major, minor, password, photo_url, portfolio_link, profile_bio, social_media, verification_token) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)'
+const insertUser = 'INSERT INTO "user" (current_class, email, full_name, internships_applied, internships_favorited, major, minor, password, photo_url, portfolio_link, profile_bio, social_media, verification_token, internships_viewed, companies_viewed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)'
 const getAllUsers = 'SELECT * FROM "user"'
 const getVerificationToken = 'SELECT verification_token FROM "user" WHERE email = $1'
 const getUserByEmail = 'SELECT * FROM "user" WHERE email = $1'
