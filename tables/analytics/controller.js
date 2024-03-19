@@ -50,21 +50,58 @@ const getAllUserAnalytics = async (request, response) => {
 
 const saveAllUserAnalytics = async (request, response) => {
   try {
+    const res = await fetch('http://localhost:8000/api/analytics/all/user');
+    if (!res.ok) {
+      console.error(`HTTP error! status: ${res.status}`);
+      throw new Error('Failed to Fetch User Analytics');
+    }
 
-    const result = await db.transaction([
+
+    const json = await res.json();
+
+    const {
+      total_users,
+      total_freshmen,
+      total_sophomores,
+      total_juniors,
+      total_seniors,
+      total_graduates,
+      total_alumni,
+      total_faculty,
+      total_likes,
+      total_applied,
+      total_posts,
+      total_comments,
+      total_events
+    } = json;
+
+    const result = await db.query(queries.insertUserAnalytics, [
+      total_users,
+      total_freshmen,
+      total_sophomores,
+      total_juniors,
+      total_seniors,
+      total_graduates,
+      total_alumni,
+      total_faculty,
+      total_likes,
+      total_applied,
+      total_posts,
+      total_comments,
+      total_events
     ]);
 
-        if (result.rowCount === 0) {
-          return response.status(400).send('No User Analytics found!');
-        }
+    if (result.rowCount === 0) {
+      return response.status(400).send('User Analytics were not saved!');
+    }
 
-        response.status(200).json(result.rows);
-
+    return response.status(200).send('User Analytics were saved successfully!');
   } catch (error) {
     console.error(error);
     response.status(500).send('Server error: Failed to save the user analytics');
   }
-}
+};
+
 
 const saveAllCompanyAnalytics = async (request, response) => {
   try {
