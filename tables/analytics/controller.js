@@ -19,6 +19,7 @@ const getAllUserAnalytics = async (request, response) => {
       queries.totalPosts,
       queries.totalComments,
       queries.totalEvents,
+      queries.activeDailyUsers,
     ]);
 
     if (results.rowCount === 0) {
@@ -39,7 +40,10 @@ const getAllUserAnalytics = async (request, response) => {
       total_posts: results[10].rows[0].count,
       total_comments: results[11].rows[0].count,
       total_events: results[12].rows[0].count,
+      active_daily_users: results[13].rows[0].count,
     };
+
+    analytics.active_daily_users = (analytics.active_daily_users / analytics.total_users) * 100;
     
     response.status(200).json(analytics);
     

@@ -1,3 +1,10 @@
+const date = new Date();
+
+const activeDailyUsers = {
+  text: 'SELECT COUNT(*) FROM "user" WHERE DATE(last_login) = $1',
+  params: [date],
+}
+
 const totalUsers = {
   text: 'SELECT COUNT(*) FROM "user"',
   params: [],
@@ -66,6 +73,7 @@ const totalEvents = {
 const insertUserAnalytics = 'INSERT INTO user_analytics (total_users, total_freshmen, total_sophomores, total_juniors, total_seniors, total_graduates, total_alumni, total_faculty, total_likes, total_applied, total_posts, total_comments, total_events) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
 
 module.exports = {
+  activeDailyUsers,
   totalUsers,
   totalFreshmen,
   totalSophomores,
