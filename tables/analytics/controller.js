@@ -51,7 +51,7 @@ const getAllUserAnalytics = async (request, response) => {
 
 const saveAllUserAnalytics = async (request, response) => {
   try {
-    const res = await axios.get('http://localhost:8000/api/analytics/all/user');
+    const res = await axios.get('https://api.cache-it.com/api/analytics/all/user');
     console.log('res: ', res);
     if (res.status !== 200) {
       console.error(`HTTP error! status: ${res.status}`);
