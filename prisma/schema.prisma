@@ -137,7 +137,7 @@ model user {
   session               session[]
 }
 
-model userAnalytics {
+model user_analytics {
   id                 Int      @id @default(autoincrement())
   total_users        Int
   total_liked        Int
