@@ -137,15 +137,24 @@ model user {
   session               session[]
 }
 
-model userAnalytics {
+model user_analytics {
   id                 Int      @id @default(autoincrement())
-  total_users        Int
-  total_liked        Int
-  total_applied      Int
-  total_posts        Int
-  total_events       Int
-  internships_viewed Int
-  companies_viewed   Int
-  active_users       Int
+  total_users        Int?
+  total_freshmen     Int?
+  total_sophomores   Int?
+  total_juniors      Int?
+  total_seniors      Int?
+  total_graduates    Int?
+  total_alumni       Int?
+  total_faculty      Int?
+  total_likes        Int?
+  total_comments     Int?
+  total_applied      Int?
+  total_posts        Int?
+  total_events       Int?
+  internships_viewed Int?
+  companies_viewed   Int?
+  active_users       Int?
   created_at         DateTime @default(now())
+  updated_at         DateTime?
 }

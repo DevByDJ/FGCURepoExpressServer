@@ -1,5 +1,6 @@
 const queries = require('../analytics/queries');
 const db = require('../../database');
+const axios = require('axios');
 
 const getAllUserAnalytics = async (request, response) => {
   try {
@@ -25,19 +26,19 @@ const getAllUserAnalytics = async (request, response) => {
     }
 
     const analytics = {
-      totalUsers: results[0].rows[0].count,
-      totalFreshmen: results[1].rows[0].count,
-      totalSophomores: results[2].rows[0].count,
-      totalJuniors: results[3].rows[0].count,
-      totalSeniors: results[4].rows[0].count,
-      totalGraduates: results[5].rows[0].count,
-      totalAlumni: results[6].rows[0].count,
-      totalFaculty: results[7].rows[0].count,
-      totalLikes: results[8].rows[0].count,
-      totalApplied: results[9].rows[0].count,
-      totalPosts: results[10].rows[0].count,
-      totalComments: results[11].rows[0].count,
-      totalEvents: results[12].rows[0].count,
+      total_users: results[0].rows[0].count,
+      total_freshmen: results[1].rows[0].count,
+      total_sophomores: results[2].rows[0].count,
+      total_juniors: results[3].rows[0].count,
+      total_seniors: results[4].rows[0].count,
+      total_graduates: results[5].rows[0].count,
+      total_alumni: results[6].rows[0].count,
+      total_faculty: results[7].rows[0].count,
+      total_likes: results[8].rows[0].count,
+      total_applied: results[9].rows[0].count,
+      total_posts: results[10].rows[0].count,
+      total_comments: results[11].rows[0].count,
+      total_events: results[12].rows[0].count,
     };
     
     response.status(200).json(analytics);
@@ -50,21 +51,58 @@ const getAllUserAnalytics = async (request, response) => {
 
 const saveAllUserAnalytics = async (request, response) => {
   try {
+    const res = await axios.get('https://api.cache-it.com/api/analytics/all/user');
+    console.log('res: ', res);
+    if (res.status !== 200) {
+      console.error(`HTTP error! status: ${res.status}`);
+      throw new Error('Failed to Fetch User Analytics');
+    }
 
-    const result = await db.transaction([
+    const json = res.data;
+
+    const {
+      total_users,
+      total_freshmen,
+      total_sophomores,
+      total_juniors,
+      total_seniors,
+      total_graduates,
+      total_alumni,
+      total_faculty,
+      total_likes,
+      total_applied,
+      total_posts,
+      total_comments,
+      total_events
+    } = json;
+
+    const result = await db.query(queries.insertUserAnalytics, [
+      total_users,
+      total_freshmen,
+      total_sophomores,
+      total_juniors,
+      total_seniors,
+      total_graduates,
+      total_alumni,
+      total_faculty,
+      total_likes,
+      total_applied,
+      total_posts,
+      total_comments,
+      total_events
     ]);
 
-        if (result.rowCount === 0) {
-          return response.status(400).send('No User Analytics found!');
-        }
+    if (result.rowCount === 0) {
+      return response.status(400).send('User Analytics were not saved!');
+    }
 
-        response.status(200).json(result.rows);
-
+    return response.status(200).send('User Analytics were saved successfully!');
   } catch (error) {
     console.error(error);
     response.status(500).send('Server error: Failed to save the user analytics');
   }
-}
+};
+
 
 const saveAllCompanyAnalytics = async (request, response) => {
   try {

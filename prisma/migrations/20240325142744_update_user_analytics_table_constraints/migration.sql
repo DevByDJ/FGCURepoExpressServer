@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE "user_analytics" ALTER COLUMN "total_users" DROP NOT NULL,
+ALTER COLUMN "total_applied" DROP NOT NULL,
+ALTER COLUMN "total_posts" DROP NOT NULL,
+ALTER COLUMN "total_events" DROP NOT NULL,
+ALTER COLUMN "internships_viewed" DROP NOT NULL,
+ALTER COLUMN "companies_viewed" DROP NOT NULL,
+ALTER COLUMN "active_users" DROP NOT NULL,
+ALTER COLUMN "total_alumni" DROP NOT NULL,
+ALTER COLUMN "total_comments" DROP NOT NULL,
+ALTER COLUMN "total_faculty" DROP NOT NULL,
+ALTER COLUMN "total_freshmen" DROP NOT NULL,
+ALTER COLUMN "total_juniors" DROP NOT NULL,
+ALTER COLUMN "total_likes" DROP NOT NULL,
+ALTER COLUMN "total_seniors" DROP NOT NULL,
+ALTER COLUMN "total_sophomores" DROP NOT NULL,
+ALTER COLUMN "total_graduates" DROP NOT NULL;
