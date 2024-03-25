@@ -1,5 +1,6 @@
 const queries = require('../analytics/queries');
 const db = require('../../database');
+const axios = require('axios');
 
 const getAllUserAnalytics = async (request, response) => {
   try {
@@ -25,19 +26,19 @@ const getAllUserAnalytics = async (request, response) => {
     }
 
     const analytics = {
-      totalUsers: results[0].rows[0].count,
-      totalFreshmen: results[1].rows[0].count,
-      totalSophomores: results[2].rows[0].count,
-      totalJuniors: results[3].rows[0].count,
-      totalSeniors: results[4].rows[0].count,
-      totalGraduates: results[5].rows[0].count,
-      totalAlumni: results[6].rows[0].count,
-      totalFaculty: results[7].rows[0].count,
-      totalLikes: results[8].rows[0].count,
-      totalApplied: results[9].rows[0].count,
-      totalPosts: results[10].rows[0].count,
-      totalComments: results[11].rows[0].count,
-      totalEvents: results[12].rows[0].count,
+      total_users: results[0].rows[0].count,
+      total_freshmen: results[1].rows[0].count,
+      total_sophomores: results[2].rows[0].count,
+      total_juniors: results[3].rows[0].count,
+      total_seniors: results[4].rows[0].count,
+      total_graduates: results[5].rows[0].count,
+      total_alumni: results[6].rows[0].count,
+      total_faculty: results[7].rows[0].count,
+      total_likes: results[8].rows[0].count,
+      total_applied: results[9].rows[0].count,
+      total_posts: results[10].rows[0].count,
+      total_comments: results[11].rows[0].count,
+      total_events: results[12].rows[0].count,
     };
     
     response.status(200).json(analytics);
@@ -50,14 +51,14 @@ const getAllUserAnalytics = async (request, response) => {
 
 const saveAllUserAnalytics = async (request, response) => {
   try {
-    const res = await fetch('http://localhost:8000/api/analytics/all/user');
-    if (!res.ok) {
+    const res = await axios.get('http://localhost:8000/api/analytics/all/user');
+    console.log('res: ', res);
+    if (res.status !== 200) {
       console.error(`HTTP error! status: ${res.status}`);
       throw new Error('Failed to Fetch User Analytics');
     }
 
-
-    const json = await res.json();
+    const json = res.data;
 
     const {
       total_users,
